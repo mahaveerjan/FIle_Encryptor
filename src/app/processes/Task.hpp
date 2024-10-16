@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include "../file_handling/IO.hpp"
+#include <sstream>
 enum class Action
 {
     ENCRYPT,
@@ -19,10 +20,31 @@ struct Task
 
     std:: string toString(){
         std::ostringstream oss;
-        oss<<filePath<<","<<(action ==Action::ENCRYPT? "ENCRYPT": "DECRYPT");t
+        oss<<filePath<<","<<(action == Action::ENCRYPT? "ENCRYPT": "DECRYPT");
+        //test.txt ENCRYPT f_stream
+        //
+        return oss.str();
     }
 
+    static Task fromString(const std:: string &taskData){
+        std::istringstream iss(taskData);
+        std::string filePath;
+        std::string actionStr;
 
+
+        if(std::getline(iss, filePath, ',') && std::getline(iss,actionStr)){
+           Action action = (actionStr=="ENCRYPT"? Action::ENCRYPT: Action::DECRYPT);
+           IO io(filePath);
+           std::fstream f_stream = std::move(io.getFileStream());
+           if(f_stream.is_open()){
+            return Task(std::move(f_stream), action, filePath);
+           }else{
+                throw std::runtime_error("Failed to open file"+ filePath);
+           }
+        }else{
+            throw std::runtime_error("Invalid task data format");
+        }
+    }
 };
 
 
