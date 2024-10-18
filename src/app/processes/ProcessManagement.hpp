@@ -5,11 +5,16 @@
 #include <queue>
 #include <memory>
 
-class ProcessManagement{
+class ProcessManagement
+{
 
-    public:
-    
-}
+public:
+    ProcessManagement();
+    bool submitToQueue(std::unique_ptr<Task> task);
+    void executeTasks();
 
+private:
+    std::queue<std::unique_ptr<Task>> taskQueue;
+};
 
 #endif
